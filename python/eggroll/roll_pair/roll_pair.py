@@ -726,7 +726,7 @@ class RollPair(object):
 
     @_method_profile_logger
     def save_as(self, name=None, namespace=None, partition=None, options: dict = None):
-        if partition is not None and partition <= 0:
+        if partition is not None and partition <= 0:  # 如果partition 设置了一个小于等于0的值，抛异常
             raise ValueError('partition cannot <= 0')
 
         if not namespace:
@@ -739,7 +739,7 @@ class RollPair(object):
             else:
                 name = self.get_name()
 
-        if not partition:
+        if not partition:  # 如果没传入了分区参数，这里就用原分区数进行赋值
             partition = self.get_partitions()
 
         if options is None:
@@ -755,9 +755,9 @@ class RollPair(object):
             total_partitions=partition))
 
         if partition == self.get_partitions() and not refresh_nodes:
-            return self.map_values(lambda v: v, output=saved_as_store, options=options)
+            return self.map_values(lambda v: v, output=saved_as_store, options=options)  # 这里只取值
         else:
-            return self.map(lambda k, v: (k, v), output=saved_as_store, options=options)
+            return self.map(lambda k, v: (k, v), output=saved_as_store, options=options)  # 这个要取出键和值
 
     """
         computing api
@@ -782,7 +782,7 @@ class RollPair(object):
             options = {}
 
         outputs = self._maybe_set_output(output)
-
+        # cloudpickle.dumps(func) 反序列化存储引擎中的数据
         functor = ErFunctor(name=RollPair.MAP_VALUES, serdes=SerdesTypes.CLOUD_PICKLE, body=cloudpickle.dumps(func))
         # todo:1: options issues. refer to line 77
         final_options = {}
