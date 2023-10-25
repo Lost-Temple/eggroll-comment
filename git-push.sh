@@ -1,3 +1,3 @@
 git add .
 git commit -m "添加注释"
-git push -u eggroll-comment eggroll-maodm_dev
+git push -u eggroll-comment eggroll_maodm_dev
